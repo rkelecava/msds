@@ -1,0 +1,4 @@
+node_modules/
+client/components/
+files/
+server/env.js

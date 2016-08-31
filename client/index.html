@@ -1,0 +1,52 @@
+<!Doctype html>
+<html ng-app="msds">
+	<head>
+		<title></title>
+		<link href="components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+		<link href="assets/css/style.css" rel="stylesheet" />
+	</head>
+	<body>
+		<div class="container">
+		    <nav class="navbar navbar-inverse">
+		        <div class="container-fluid">
+		            <div class="navbar-header">
+		                <a class="navbar-brand" href="#">MSDS Sheets</a>
+		            </div>
+
+		            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+		            	<ul class="nav navbar-nav navbar-right">
+		                	<li role="presentation"><a href="/#/addSheet">Add Sheet</a></li>
+		                	<li role="presentation"><a href="/#/sheets">Sheets</a></li>
+		              	</ul>
+		            </div>
+		        </div>
+		    </nav>
+		    <ui-view></ui-view>
+		</div>
+
+		<!-- Main Javascript Includes -->
+			<script src="components/angular/angular.min.js"></script>
+			<script src="components/angular-ui-router/release/angular-ui-router.min.js"></script>
+			<script src="components/angular-animate/angular-animate.min.js"></script>
+			<script src="components/angular-touch/angular-touch.min.js"></script>
+			<script src="components/angular-bootstrap/ui-bootstrap.min.js"></script>
+		<!-- Main Javascript Includes -->
+		<!-- App -->
+			<!-- Module -->
+				<script src="app/app.module.js"></script>
+			<!-- Module -->
+			<!-- Directives -->
+				<script src="app/app.directives.js"></script>
+			<!-- Directives -->
+			<!-- Services -->
+				<script src="app/app.services.js"></script>
+			<!-- Services -->
+			<!-- Routes -->
+				<script src="app/app.routes.js"></script>
+			<!-- Routes -->
+			<!-- Controllers -->
+				<script src="app/app.controllers.js"></script>
+			<!-- Controllers -->
+		<!-- App -->
+	</body>
+</html>
