@@ -1,3 +1,27 @@
+<div class="table-responsive">
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th>Manufacturer</th>
+				<th>Product</th>
+				<th>Trade name</th>
+				<th>Download</th>
+				<th></th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr ng-repeat="safetySheet in safetySheets | orderBy:'manufacturer'">
+				<td>{{safetySheet.manufacturer}}</td>
+				<td>{{safetySheet.product}}</td>
+				<td><span ng-show="safetySheet.tradeName">{{safetySheet.tradeName}}</span></td>
+				<td><a href="/api/safetySheets/download?_id={{safetySheet._id}}"><span class="glyphicon glyphicon-file"></span></a></td>
+				<td>&nbsp;</td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+<ul uib-pagination total-items="totalItems" ng-model="currentPage" max-size="maxSize" class="pagination-sm" boundary-links="true" rotate="false" ng-change="paginate()"></ul>
+<!--
 <div class="col-sm-4 col-sm-offset-4">
 	<form>
 
@@ -24,3 +48,4 @@
 	    <button class="btn btn-primary" ng-click="uploadFile()">upload file</button>
 	</form>
 </div>
+-->

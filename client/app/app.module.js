@@ -1,1 +1,1 @@
-var app = angular.module('msds', ['ui.router']);
+var app = angular.module('msds', ['ui.router','ui.bootstrap','restangular']);

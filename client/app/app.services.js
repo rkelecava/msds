@@ -19,3 +19,11 @@ app.factory('fileUpload', ['$http', function ($http) {
 
 	return o;
 }]);
+
+
+app.factory('safetySheets', ['Restangular', function (Restangular) {
+	return Restangular.service('api/safetySheets');
+}]);
+
+
+

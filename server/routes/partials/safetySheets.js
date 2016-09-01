@@ -6,6 +6,7 @@ var util = require('util');
 var path = require('path');
 
 safetySheet.methods(['get', 'put', 'post', 'delete']);
+safetySheet.before('get', skipAndLimit);
 safetySheet.before('post', uploadFile);
 
 safetySheet.route('download.get', function(req, res, next) {
@@ -25,6 +26,19 @@ safetySheet.route('download.get', function(req, res, next) {
 	});
 });
 
+safetySheet.route('count.get', function(req, res, next) {
+
+	safetySheet.find().count(function (err, count) {
+		if (err) { return next(err); }
+		res.status(200).json(count);
+	});
+});
+
+function skipAndLimit(req, res, next) {
+	req.query.skip = parseInt(req.query.skip);
+	req.query.limit = parseInt(req.query.limit);
+	next();
+}
 
 function uploadFile(req, res, next) {
 	form.parse(req, function (err, fields, files) {

@@ -8,6 +8,11 @@ app.config([
 				url: '/index',
 				templateUrl: '/partials/_index.html',
 				controller: 'indexCtrl'
+				/*resolve: {
+					safetySheetPromise: ['safetySheets', function (safetySheets) {
+						return safetySheets.get();
+					}]
+				},*/
 			});
 	}
 ]);
