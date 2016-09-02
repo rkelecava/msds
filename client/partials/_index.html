@@ -1,11 +1,28 @@
-<div class="table-responsive">
+<div class="page-header">
+	<h1>Material safety data sheets</h1>
+</div>
+
+<form class="form-inline" style="margin-bottom: 30px;">
+	<div class="form-group">
+        <div class="icon-addon addon-lg">
+            <input type="text" placeholder="Search" class="form-control" id="search" ng-model="search" ng-change="find()" />
+            <label for="search" class="glyphicon glyphicon-search" rel="tooltip" title="Search"></label>
+        </div>
+	</div>
+</form>
+
+<div uib-alert ng-repeat="alert in alerts" ng-class="'alert-' + (alert.type || 'warning')" close="closeAlert($index)" dismiss-on-timeout="7000">{{alert.msg}}</div>
+
+<div ng-show="results()" class="table-responsive">
 	<table class="table table-striped">
 		<thead>
 			<tr>
 				<th>Manufacturer</th>
 				<th>Product</th>
 				<th>Trade name</th>
+				<th>Upload date</th>
 				<th>Download</th>
+				<th></th>
 				<th></th>
 			</tr>
 		</thead>
@@ -14,13 +31,16 @@
 				<td>{{safetySheet.manufacturer}}</td>
 				<td>{{safetySheet.product}}</td>
 				<td><span ng-show="safetySheet.tradeName">{{safetySheet.tradeName}}</span></td>
-				<td><a href="/api/safetySheets/download?_id={{safetySheet._id}}"><span class="glyphicon glyphicon-file"></span></a></td>
-				<td>&nbsp;</td>
+				<td>{{safetySheet.created | date}}</td>
+				<td><a href="/api/safetySheets/download?_id={{safetySheet._id}}" class="btn btn-success"><span class="glyphicon glyphicon-download-alt"></span></a></td>
+				<td><button ng-click="update()" class="btn btn-info"><span class="glyphicon glyphicon-pencil"></span></button></td>
+				<td><button ng-click="delete(safetySheet._id, safetySheet.manufacturer, safetySheet.product)" class="btn btn-danger"><span class="glyphicon glyphicon-trash"></span></button></td>
 			</tr>
 		</tbody>
 	</table>
 </div>
-<ul uib-pagination total-items="totalItems" ng-model="currentPage" max-size="maxSize" class="pagination-sm" boundary-links="true" rotate="false" ng-change="paginate()"></ul>
+<h2 ng-hide="results()"><span class="alert alert-warning">There are no items matching "{{search}}"</span></h2>
+<ul uib-pagination total-items="totalItems" ng-model="currentPage" max-size="maxSize" class="pagination-sm" boundary-links="true" items-per-page="itemsPerPage" rotate="false" ng-change="paginate()" ng-hide="search"></ul>
 <!--
 <div class="col-sm-4 col-sm-offset-4">
 	<form>

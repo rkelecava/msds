@@ -8,6 +8,7 @@ var path = require('path');
 safetySheet.methods(['get', 'put', 'post', 'delete']);
 safetySheet.before('get', skipAndLimit);
 safetySheet.before('post', uploadFile);
+safetySheet.before('delete', deleteFile);
 
 safetySheet.route('download.get', function(req, res, next) {
 
@@ -23,6 +24,27 @@ safetySheet.route('download.get', function(req, res, next) {
   			res.download(file, filename, function(err){
   				if (err) { return next(err); }
 			});
+	});
+});
+
+safetySheet.route('searchByManufacturer.get', function (req, res, next) {
+
+	safetySheet.find({"manufacturer": new RegExp('.*'+req.query.search+'.*','i')}).limit(parseInt(req.query.limit)).sort('manufacturer').exec(function (err, safetySheets) {
+		res.status(200).json(safetySheets);
+	});
+});
+
+safetySheet.route('searchByProduct.get', function (req, res, next) {
+
+	safetySheet.find({"product": new RegExp('.*'+req.query.search+'.*','i')}, function (err, safetySheets) {
+		res.status(200).json(safetySheets);
+	});
+});
+
+safetySheet.route('searchByTradeName.get', function (req, res, next) {
+
+	safetySheet.find({"tradeName": new RegExp('.*'+req.query.search+'.*','i')}, function (err, safetySheets) {
+		res.status(200).json(safetySheets);
 	});
 });
 
@@ -69,6 +91,16 @@ function uploadFile(req, res, next) {
 		});
 	});
 
+}
+
+function deleteFile(req, res, next) {
+	safetySheet.findById(req.params.id, function (err, safetySheet) {
+		if (err) { return next(err); }
+		fs.unlink(safetySheet.file.url, function (err) {
+			if (err) { return next(err); }
+		});
+	});
+	next();
 }
 
 
