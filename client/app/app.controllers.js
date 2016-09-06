@@ -1,9 +1,13 @@
-app.controller('indexCtrl', ['$scope', 'fileUpload', 'safetySheets', function ($scope, fileUpload, safetySheets) {
+app.controller('indexCtrl', ['$scope', '$q', 'safetySheets', function ($scope, $q, safetySheets) {
+/* Variable to control display of add form */
+	$scope.addForm = 0;
+	$scope.updateForm = 0;
+/* Variable to control display of add form */
 /* Alerts */
-  $scope.alerts = [];
-  $scope.closeAlert = function(index) {
-    $scope.alerts.splice(index, 1);
-  };
+  	$scope.alerts = [];
+  	$scope.closeAlert = function(index) {
+    	$scope.alerts.splice(index, 1);
+  	};
 /* Alerts */
 
 /* Download a file by _id */
@@ -29,6 +33,54 @@ app.controller('indexCtrl', ['$scope', 'fileUpload', 'safetySheets', function ($
 	};
 /* Delete */
 
+/* Show update form */
+	$scope.showUpdateForm = function (safetySheet) {
+		$scope.updateForm = !$scope.updateForm;
+		$scope.update = {
+			_id: safetySheet._id,
+			manufacturer: safetySheet.manufacturer,
+			product: safetySheet.product,
+			tradeName: safetySheet.tradeName
+		};
+	};
+/* Show update form */
+/* Update manufacturer */
+	$scope.updateManufacturer = function (safetySheet) {
+		var data = {
+			manufacturer: safetySheet.manufacturer
+		};
+		safetySheets.one('updateDatasheet').customPUT(data, '', {"_id" : safetySheet._id});
+	};
+/* Update manufacturer */
+/* Update product */
+	$scope.updateProduct = function (safetySheet) {
+		var data = {
+			product: safetySheet.product
+		};
+		safetySheets.one('updateDatasheet').customPUT(data, '', {"_id" : safetySheet._id});
+	};
+/* Update product */
+/* Update trade name */
+	$scope.updateTradeName = function (safetySheet) {
+		var data = {
+			tradeName: safetySheet.tradeName
+		};
+		safetySheets.one('updateDatasheet').customPUT(data, '', {"_id" : safetySheet._id});
+	};
+/* Update trade name */
+/* Update file */
+	$scope.updateFile = function (safetySheet) {
+		var fd = new FormData();
+		fd.append('safetySheet', $scope.myFile);
+		safetySheets.one(safetySheet._id).customPUT(fd, '', {transformRequest: angular.identity}, {'Content-Type': undefined}).then(function () {
+			$scope.alerts.push({ type: 'success', msg: 'You have updated the '+safetySheet.manufacturer+' '+safetySheet.product+' datasheet.'});
+	        angular.element(document.getElementById('file')).val(null);
+	        $scope.update = {};
+	        $scope.updateForm = !$scope.updateForm;
+		});
+	};
+/* Update file */
+
 /* Search */
 	$scope.find = function () {
 		$scope.currentPage = 1;
@@ -51,13 +103,23 @@ app.controller('indexCtrl', ['$scope', 'fileUpload', 'safetySheets', function ($
 /* Search */
 
 /* Upload a file */
-	$scope.safetySheet = {};
+	$scope.uploadFile = function() {
 
-	$scope.uploadFile = function(){
+		var fd = new FormData();
+		fd.append('safetySheet', $scope.myFile);
+		fd.append('manufacturer', $scope.add.manufacturer);
+		fd.append('product', $scope.add.product);
+		fd.append('tradeName', $scope.add.tradeName);
 
-        fileUpload.uploadFileToUrl($scope.myFile, $scope.safetySheet);
-        $scope.myFile = {};
-        $scope.safetySheet = {};
+		safetySheets.one().customPOST(fd, "", {transformRequest: angular.identity}, {'Content-Type': undefined}).then(function () {
+			$scope.currentPage = 1;
+			init();
+			$scope.alerts.push({ type: 'success', msg: 'You have added the '+$scope.add.manufacturer+' '+$scope.add.product+' datasheet.'});
+	        angular.element(document.getElementById('file')).val(null);
+	        $scope.add = {};
+	        $scope.addForm = !$scope.addForm;
+		});
+
     };
 /* Upload a file */
 
@@ -66,7 +128,7 @@ app.controller('indexCtrl', ['$scope', 'fileUpload', 'safetySheets', function ($
   	$scope.currentPage = 1;
   	$scope.paginate = function () {
   		var skip = (($scope.currentPage*$scope.itemsPerPage)-$scope.itemsPerPage);
-		safetySheets.getList({"limit" : $scope.itemsPerPage, "skip" : skip}).then(function (safetySheets) {
+		safetySheets.getList({"limit" : $scope.itemsPerPage, "skip" : skip, "sort" : "manufacturer"}).then(function (safetySheets) {
 			$scope.safetySheets = safetySheets;
 		});
   	};
@@ -81,7 +143,7 @@ app.controller('indexCtrl', ['$scope', 'fileUpload', 'safetySheets', function ($
 
 // Initialize
 	var init = function () {
-		safetySheets.getList({"limit" : $scope.itemsPerPage, "skip" : "0"}).then(function (safetySheets) {
+		safetySheets.getList({"limit" : $scope.itemsPerPage, "skip" : "0", "sort" : "manufacturer"}).then(function (safetySheets) {
 			$scope.safetySheets = safetySheets;
 		});
 		safetySheets.one('count').customGET().then(function (count) {

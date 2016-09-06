@@ -1,71 +1,102 @@
-<div class="page-header">
-	<h1>Material safety data sheets</h1>
-</div>
-
-<form class="form-inline" style="margin-bottom: 30px;">
-	<div class="form-group">
-        <div class="icon-addon addon-lg">
-            <input type="text" placeholder="Search" class="form-control" id="search" ng-model="search" ng-change="find()" />
-            <label for="search" class="glyphicon glyphicon-search" rel="tooltip" title="Search"></label>
-        </div>
+<!-- Page header-->
+	<div class="page-header">
+		<h1>Material safety data sheets</h1>
 	</div>
-</form>
 
-<div uib-alert ng-repeat="alert in alerts" ng-class="'alert-' + (alert.type || 'warning')" close="closeAlert($index)" dismiss-on-timeout="7000">{{alert.msg}}</div>
+<!-- Search form -->
+	<div class="row">
+		<div class="col-sm-6">
+			<form class="form-inline" style="margin-bottom: 30px;">
+				<div class="form-group">
+			        <div class="icon-addon addon-lg">
+			            <input type="text" placeholder="Search" class="form-control" id="search" ng-model="search" ng-change="find()" />
+			            <label for="search" class="glyphicon glyphicon-search" rel="tooltip" title="Search"></label>
+			        </div>
+				</div>
+			</form>
+		</div>
+		<div class="col-sm-3 col-sm-offset-3">
+			<button ng-hide="updateForm" class="btn btn-primary" ng-click="addForm = !addForm"><span ng-show="addForm" class="glyphicon glyphicon-remove"></span><span ng-hide="addForm" class="glyphicon glyphicon-plus"></span> Add</button>
+		</div>
+	</div>
 
-<div ng-show="results()" class="table-responsive">
-	<table class="table table-striped">
-		<thead>
-			<tr>
-				<th>Manufacturer</th>
-				<th>Product</th>
-				<th>Trade name</th>
-				<th>Upload date</th>
-				<th>Download</th>
-				<th></th>
-				<th></th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr ng-repeat="safetySheet in safetySheets | orderBy:'manufacturer'">
-				<td>{{safetySheet.manufacturer}}</td>
-				<td>{{safetySheet.product}}</td>
-				<td><span ng-show="safetySheet.tradeName">{{safetySheet.tradeName}}</span></td>
-				<td>{{safetySheet.created | date}}</td>
-				<td><a href="/api/safetySheets/download?_id={{safetySheet._id}}" class="btn btn-success"><span class="glyphicon glyphicon-download-alt"></span></a></td>
-				<td><button ng-click="update()" class="btn btn-info"><span class="glyphicon glyphicon-pencil"></span></button></td>
-				<td><button ng-click="delete(safetySheet._id, safetySheet.manufacturer, safetySheet.product)" class="btn btn-danger"><span class="glyphicon glyphicon-trash"></span></button></td>
-			</tr>
-		</tbody>
-	</table>
-</div>
-<h2 ng-hide="results()"><span class="alert alert-warning">There are no items matching "{{search}}"</span></h2>
-<ul uib-pagination total-items="totalItems" ng-model="currentPage" max-size="maxSize" class="pagination-sm" boundary-links="true" items-per-page="itemsPerPage" rotate="false" ng-change="paginate()" ng-hide="search"></ul>
-<!--
-<div class="col-sm-4 col-sm-offset-4">
-	<form>
 
+<!-- Form to add a new data sheet -->
+	<form ng-show="addForm" class="form-inline" style="margin-top: 30px; margin-bottom: 30px;">
+		<h3>Add a new data sheet</h3>
+		<div class="col-sm-offset-1">
 		<div class="form-group">
-			<label>Manufacturer</label>
-			<input class="form-control" type="text" ng-model="safetySheet.manufacturer" />
+			<label for="manufacturer">Manufacturer: </label>
+			<input id="manufacturer" class="form-control" type="text" ng-model="add.manufacturer" placeholder="Manufacturer (required)" />
 		</div>
 
 		<div class="form-group">
-			<label>Product</label>
-			<input class="form-control" type="text" ng-model="safetySheet.product" />
+			<label for="product">Product: </label>
+			<input id="product" class="form-control" type="text" ng-model="add.product" placeholder="Product (required)" />
 		</div>
 
 		<div class="form-group">
-			<label>Trade Name</label>
-			<input class="form-control" type="text" ng-model="safetySheet.tradeName" />
+			<label for="tradeName">Trade Name: </label>
+			<input id="tradeName" class="form-control" type="text" ng-model="add.tradeName" placeholder="Trade name" />
 		</div>
 
 		<div class="form-group">
-			<label>Upload pdf</label>
-			<input class="form-control" type="file" file-model="myFile" />
+			<label for="file">File: </label>
+			<input id="file" class="form-control" type="file" file-model="myFile" />
 		</div>
 
-	    <button class="btn btn-primary" ng-click="uploadFile()">upload file</button>
+	    <button class="btn btn-primary" ng-click="uploadFile()">Add</button>
+	    </div>
 	</form>
-</div>
--->
+
+<!-- Form to update a new data sheet -->
+	<form ng-show="updateForm" class="form-inline" style="margin-top: 30px; margin-bottom: 30px;">
+		<h3>Update the {{update.manufacturer}} {{update.product}} data sheet</h3>
+		<div class="col-sm-offset-1">
+
+		<div class="form-group">
+			<label for="file">File: </label>
+			<input id="file" class="form-control" type="file" file-model="myFile" />
+		</div>
+
+	    <button class="btn btn-primary" ng-click="updateFile(update)">Update</button><button class="btn btn-default" ng-click="updateForm = !updateForm">Cancel</button>
+	    </div>
+	</form>
+
+<!-- Alerts -->
+	<div uib-alert ng-repeat="alert in alerts" ng-class="'alert-' + (alert.type || 'warning')" close="closeAlert($index)" dismiss-on-timeout="7000">{{alert.msg}}</div>
+
+<!-- Data sheets -->
+	<div ng-show="results()" class="table-responsive">
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th>Manufacturer</th>
+					<th>Product</th>
+					<th>Trade name</th>
+					<th>Upload date</th>
+					<th>Download</th>
+					<th></th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="safetySheet in safetySheets">
+					<td editable-text="safetySheet.manufacturer" onaftersave="updateManufacturer(safetySheet)">{{safetySheet.manufacturer}}</td>
+					<td editable-text="safetySheet.product" onaftersave="updateProduct(safetySheet)">{{safetySheet.product}}</td>
+					<td editable-text="safetySheet.tradeName" onaftersave="updateTradeName(safetySheet)"><span ng-show="safetySheet.tradeName!='undefined'">{{safetySheet.tradeName}}</span><span ng-hide="safetySheet.tradeName!='undefined'">N/A</span></td>
+					<td>{{safetySheet.created | date}}</td>
+					<td><a href="/api/safetySheets/download?_id={{safetySheet._id}}" class="btn btn-success"><span class="glyphicon glyphicon-download-alt"></span></a></td>
+					<td><button ng-click="showUpdateForm(safetySheet)" class="btn btn-info"><span class="glyphicon glyphicon-pencil"></span></button></td>
+					<td><button ng-click="delete(safetySheet._id, safetySheet.manufacturer, safetySheet.product)" class="btn btn-danger"><span class="glyphicon glyphicon-trash"></span></button></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<h2 ng-hide="results()"><span class="alert alert-warning">There are no items matching "{{search}}"</span></h2>
+
+<!-- Pagination -->
+	<ul uib-pagination total-items="totalItems" ng-model="currentPage" max-size="maxSize" class="pagination-sm" boundary-links="true" items-per-page="itemsPerPage" rotate="false" ng-change="paginate()" ng-hide="search"></ul>
+
+
+

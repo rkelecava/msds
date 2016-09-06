@@ -23,6 +23,7 @@
     "angular-ui-router": "^0.3.1",
     "angular-filepicker": "^1.1.4",
     "restangular": "^1.5.2",
-    "underscore": "^1.8.3"
+    "underscore": "^1.8.3",
+    "angular-xeditable": "^0.2.0"
   }
 }
